@@ -94,7 +94,7 @@ table{width:100%;border-collapse:collapse;}
 th{text-align:left;padding:6px 8px;color:var(--orange);font-size:12px;
    border-bottom:1px solid var(--border);}
 td{padding:6px 8px;font-size:12px;border-bottom:1px solid #2a2a3e;}
-td.g{color:var(--green);} td.r{color:var(--red);}
+td.g{color:var(--green);} td.r{color:var(--red);} td.y{color:var(--yellow);}
 
 /* ── TEXTAREA CODE ── */
 textarea.code{background:#12121c;color:var(--code);border:1px solid var(--border);
@@ -187,7 +187,8 @@ textarea.code{background:#12121c;color:var(--code);border:1px solid var(--border
   <div class="mtab" onclick="showTab(4)">🔄 Đơn vị</div>
   <div class="mtab" onclick="showTab(5)">⚖️ Vật liệu</div>
   <div class="mtab" onclick="showTab(6)">⚙️ Gốc xoay</div>
-  <div class="mtab" onclick="showTab(7)">ℹ️ Về KAYSCNC</div>
+  <div class="mtab" onclick="showTab(7)">📏 Dung sai</div>
+  <div class="mtab" onclick="showTab(8)">ℹ️ Về KAYSCNC</div>
 </div>
 
 <!-- CONTENT -->
@@ -734,8 +735,97 @@ textarea.code{background:#12121c;color:var(--code);border:1px solid var(--border
 </div><!-- end sub-content -->
 </div>
 
-<!-- ═══════════════ TAB 7: GIỚI THIỆU ═══════════════ -->
+<!-- ═══════════════ TAB 7: DUNG SAI ═══════════════ -->
 <div class="tab-pane" id="tp7">
+<div class="sec-title">📏 Dung sai ISO 286 / 公差 ISO 286</div>
+<div class="row">
+  <div class="card">
+    <div class="card-title">Tra dung sai lỗ H / H穴公差計算</div>
+    <div class="form-row"><label class="w180">Đường kính danh nghĩa D (mm):</label><input type="text" id="ht_d" value="25"></div>
+    <div class="form-row"><label class="w180">Cấp dung sai / 公差等級:</label>
+      <select id="ht_grade">
+        <option>H5</option><option>H6</option><option selected>H7</option>
+        <option>H8</option><option>H9</option><option>H10</option><option>H11</option>
+      </select>
+    </div>
+    <div class="note">Lỗ H: EI=0 (lệch dưới = 0), ES=+IT (lệch trên)</div>
+    <button class="btn green full" onclick="calcHoleTol()">▶ Tra cứu / 検索</button>
+    <div class="result" id="r_ht">---</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Tra dung sai trục / 軸公差計算</div>
+    <div class="form-row"><label class="w180">Đường kính danh nghĩa D (mm):</label><input type="text" id="st_d" value="25"></div>
+    <div class="form-row"><label class="w180">Kiểu trục / 軸種:</label>
+      <select id="st_type">
+        <option value="h">h — Hở (clearance)</option>
+        <option value="g">g — Hở nhỏ</option>
+        <option value="f">f — Hở vừa</option>
+        <option value="k">k — Trung gian</option>
+        <option value="n">n — Chặt nhẹ</option>
+        <option value="p">p — Chặt (interference)</option>
+      </select>
+    </div>
+    <div class="form-row"><label class="w180">Cấp IT / 等級:</label>
+      <select id="st_grade">
+        <option>5</option><option>6</option><option selected>7</option>
+        <option>8</option><option>9</option>
+      </select>
+    </div>
+    <div class="note">Trục h: es=0 (lệch trên=0), ei=−IT (lệch dưới)</div>
+    <button class="btn green full" onclick="calcShaftTol()">▶ Tra cứu / 検索</button>
+    <div class="result" id="r_st">---</div>
+  </div>
+</div>
+<div class="row">
+  <div class="card">
+    <div class="card-title">Bảng nhanh H7 &amp; H8 / H7・H8 クイック参照 (µm)</div>
+    <table>
+      <tr><th>Ø (mm)</th><th>H7 ES</th><th>H8 ES</th><th>EI (tất cả)</th></tr>
+      <tr><td>≤3</td><td class="g">+0.010</td><td class="g">+0.014</td><td>0</td></tr>
+      <tr><td>&gt;3~6</td><td class="g">+0.012</td><td class="g">+0.018</td><td>0</td></tr>
+      <tr><td>&gt;6~10</td><td class="g">+0.015</td><td class="g">+0.022</td><td>0</td></tr>
+      <tr><td>&gt;10~18</td><td class="g">+0.018</td><td class="g">+0.027</td><td>0</td></tr>
+      <tr><td>&gt;18~30</td><td class="g">+0.021</td><td class="g">+0.033</td><td>0</td></tr>
+      <tr><td>&gt;30~50</td><td class="g">+0.025</td><td class="g">+0.039</td><td>0</td></tr>
+      <tr><td>&gt;50~80</td><td class="g">+0.030</td><td class="g">+0.046</td><td>0</td></tr>
+      <tr><td>&gt;80~120</td><td class="g">+0.035</td><td class="g">+0.054</td><td>0</td></tr>
+      <tr><td>&gt;120~180</td><td class="g">+0.040</td><td class="g">+0.063</td><td>0</td></tr>
+      <tr><td>&gt;180~250</td><td class="g">+0.046</td><td class="g">+0.072</td><td>0</td></tr>
+      <tr><td>&gt;250~315</td><td class="g">+0.052</td><td class="g">+0.081</td><td>0</td></tr>
+      <tr><td>&gt;315~400</td><td class="g">+0.057</td><td class="g">+0.089</td><td>0</td></tr>
+      <tr><td>&gt;400~500</td><td class="g">+0.063</td><td class="g">+0.097</td><td>0</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">Kiểu lắp thường dùng / よく使う嵌め合い</div>
+    <div class="sh blue">🔵 Lắp hở — すきまばめ (Clearance fit)</div>
+    <table>
+      <tr><th>Ký hiệu</th><th>Ứng dụng tiêu biểu</th></tr>
+      <tr><td class="g">H7/h6</td><td>Định vị, trục trượt chậm</td></tr>
+      <tr><td class="g">H8/f7</td><td>Ổ trượt, bạc tốc độ cao</td></tr>
+      <tr><td class="g">H9/d9</td><td>Piston, trục trượt dài</td></tr>
+      <tr><td class="g">H11/c11</td><td>Lắp thô, không yêu cầu chính xác</td></tr>
+    </table>
+    <div class="sh orange" style="margin-top:8px">🟡 Lắp trung gian — 中間ばめ (Transition fit)</div>
+    <table>
+      <tr><th>Ký hiệu</th><th>Ứng dụng tiêu biểu</th></tr>
+      <tr><td class="y">H7/js6</td><td>Khớp nối, tháo lắp thường xuyên</td></tr>
+      <tr><td class="y">H7/k6</td><td>Trục then hoa, bánh răng nhỏ</td></tr>
+      <tr><td class="y">H7/m6</td><td>Cố định vừa, ít tháo lắp</td></tr>
+    </table>
+    <div class="sh" style="background:#3d1a1a;color:#f38ba8;margin-top:8px">🔴 Lắp chặt — しまりばめ (Interference fit)</div>
+    <table>
+      <tr><th>Ký hiệu</th><th>Ứng dụng tiêu biểu</th></tr>
+      <tr><td class="r">H7/n6</td><td>Vòng ngoài ổ lăn, bạc cố định</td></tr>
+      <tr><td class="r">H7/p6</td><td>Ép bền, không tháo thường xuyên</td></tr>
+      <tr><td class="r">H7/r6</td><td>Ép cứng, cố định vĩnh viễn</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════ TAB 8: GIỚI THIỆU ═══════════════ -->
+<div class="tab-pane" id="tp8">
 <div class="about-center">
   <div style="font-size:50px">⚙️</div>
   <div class="about-name">KAYSCNC</div>
@@ -754,10 +844,11 @@ textarea.code{background:#12121c;color:var(--code);border:1px solid var(--border
     ✅ &nbsp;材料重量 / Tính khối lượng vật liệu<br>
     ✅ &nbsp;Gốc xoay tool / 割り出し原点ツール (6 tính năng)<br>
     ✅ &nbsp;Lưu hồ sơ tâm xoay / プロファイル保存 (LocalStorage)<br>
+    ✅ &nbsp;穴公差・軸公差 / Dung sai lỗ H &amp; trục ISO 286 (H5~H11)<br>
   </div>
   <hr class="about-sep">
   <div style="color:var(--border);font-size:11px">
-    Version 1.0 &nbsp;|&nbsp; HTML5 Offline App &nbsp;|&nbsp; KAYSCNC © CUONG<br>
+    Version 1.1 &nbsp;|&nbsp; HTML5 Offline App &nbsp;|&nbsp; KAYSCNC © CUONG<br>
     Không cần internet / インターネット不要 — Chạy offline hoàn toàn
   </div>
 </div>
@@ -765,7 +856,7 @@ textarea.code{background:#12121c;color:var(--code);border:1px solid var(--border
 
 </div><!-- end content -->
 
-<div class="statusbar">✅ KAYSCNC v1.0 &nbsp;|&nbsp; Created by CUONG &nbsp;|&nbsp; Fanuc & OSP &nbsp;|&nbsp; Offline Ready</div>
+<div class="statusbar">✅ KAYSCNC v1.1 &nbsp;|&nbsp; Created by CUONG &nbsp;|&nbsp; Fanuc & OSP &nbsp;|&nbsp; Offline Ready</div>
 
 <script>
 const PI = Math.PI;
@@ -1057,6 +1148,80 @@ function copyText(id){
   const el=document.getElementById(id);
   const text=el.value||el.textContent;
   navigator.clipboard.writeText(text).then(()=>alert('✅ Đã sao chép!')).catch(()=>{el.select&&el.select();document.execCommand('copy');});
+}
+
+// ── TAB 7: DUNG SAI ISO 286 ──────────────────────────────────────────────
+const TOL_RANGES=[[0,3],[3,6],[6,10],[10,18],[18,30],[30,50],[50,80],[80,120],[120,180],[180,250],[250,315],[315,400],[400,500]];
+const TOL_LABELS=['≤3','>3~6','>6~10','>10~18','>18~30','>30~50','>50~80','>80~120','>120~180','>180~250','>250~315','>315~400','>400~500'];
+// IT5, IT6, IT7, IT8, IT9, IT10, IT11 (µm) theo khoảng kích thước
+const IT_TAB=[
+  [4,6,10,14,25,40,60],[5,8,12,18,30,48,75],[6,9,15,22,36,58,90],
+  [8,11,18,27,43,70,110],[9,13,21,33,52,84,130],[11,16,25,39,62,100,160],
+  [13,19,30,46,74,120,190],[15,22,35,54,87,140,220],[18,25,40,63,100,160,250],
+  [20,29,46,72,115,185,290],[23,32,52,81,130,210,320],[25,36,57,89,140,230,360],
+  [27,40,63,97,155,250,400]
+];
+// Lệch cơ bản trục (µm): g_es, f_es, k_ei, n_ei, p_ei
+const SHAFT_FD={
+  g:[-2,-4,-5,-6,-7,-9,-10,-12,-14,-15,-17,-18,-20],
+  f:[-6,-10,-13,-16,-20,-25,-30,-36,-43,-50,-56,-62,-68],
+  k:[0,1,1,1,2,2,2,3,3,4,4,4,5],
+  n:[4,8,10,12,15,17,20,23,27,31,34,37,40],
+  p:[6,12,15,18,22,26,32,37,43,50,56,62,68]
+};
+function getTolRange(D){
+  for(let i=0;i<TOL_RANGES.length;i++){const[lo,hi]=TOL_RANGES[i];if(D>lo&&D<=hi)return i;}
+  return -1;
+}
+function fmtMu(v){return(v>=0?'+':'')+v;}
+function fmtMm(v){return(v>=0?'+':'-')+Math.abs(v/1000).toFixed(3);}
+function calcHoleTol(){
+  try{
+    const D=f('ht_d');
+    if(D<=0||D>500){s('r_ht','⚠️ D phải từ 0 đến 500mm');return;}
+    const gStr=document.getElementById('ht_grade').value;
+    const gIdx=parseInt(gStr.substring(1))-5;// H5=0,H6=1,...H11=6
+    const ri=getTolRange(D);
+    if(ri<0){s('r_ht','⚠️ Ngoài phạm vi (0–500mm)');return;}
+    const it=IT_TAB[ri][gIdx];
+    s('r_ht',
+      `✅ Lỗ ${gStr}  Ø${D} mm\n`+
+      `Khoảng kích thước: ${TOL_LABELS[ri]}\n`+
+      `Dung sai IT = ${it} µm\n\n`+
+      `EI (lệch dưới) =   0 µm = +0.000 mm\n`+
+      `ES (lệch trên) = +${it} µm = +${(it/1000).toFixed(3)} mm\n\n`+
+      `→ Kích thước lỗ:\n`+
+      `   Ø${D.toFixed(3)} ~ Ø${(D+it/1000).toFixed(3)} mm`
+    );
+  }catch(e){s('r_ht','⚠️ Lỗi: '+e);}
+}
+function calcShaftTol(){
+  try{
+    const D=f('st_d');
+    if(D<=0||D>500){s('r_st','⚠️ D phải từ 0 đến 500mm');return;}
+    const sType=document.getElementById('st_type').value;
+    const gIdx=parseInt(document.getElementById('st_grade').value)-5;
+    const ri=getTolRange(D);
+    if(ri<0){s('r_st','⚠️ Ngoài phạm vi (0–500mm)');return;}
+    const it=IT_TAB[ri][gIdx];
+    let es,ei;
+    if(sType==='h'){es=0;ei=-it;}
+    else if(sType==='g'){es=SHAFT_FD.g[ri];ei=es-it;}
+    else if(sType==='f'){es=SHAFT_FD.f[ri];ei=es-it;}
+    else if(sType==='k'){ei=SHAFT_FD.k[ri];es=ei+it;}
+    else if(sType==='n'){ei=SHAFT_FD.n[ri];es=ei+it;}
+    else if(sType==='p'){ei=SHAFT_FD.p[ri];es=ei+it;}
+    const gradeStr=parseInt(document.getElementById('st_grade').value);
+    s('r_st',
+      `✅ Trục ${sType}${gradeStr}  Ø${D} mm\n`+
+      `Khoảng kích thước: ${TOL_LABELS[ri]}\n`+
+      `Dung sai IT = ${it} µm\n\n`+
+      `es (lệch trên) = ${fmtMu(es)} µm = ${fmtMm(es)} mm\n`+
+      `ei (lệch dưới) = ${fmtMu(ei)} µm = ${fmtMm(ei)} mm\n\n`+
+      `→ Kích thước trục:\n`+
+      `   Ø${(D+ei/1000).toFixed(3)} ~ Ø${(D+es/1000).toFixed(3)} mm`
+    );
+  }catch(e){s('r_st','⚠️ Lỗi: '+e);}
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────
