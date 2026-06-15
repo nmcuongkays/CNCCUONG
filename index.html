@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1e1e2e">
+<title>KAYSCNC — Created by CUONG</title>
+<style>
+:root{
+  --bg:#1e1e2e;--surface:#282a36;--surface2:#313244;--border:#45475a;
+  --accent:#6272a4;--accent2:#cba6f7;--green:#a6e3a1;--green2:#3d8b5e;
+  --text:#cdd6f4;--text2:#a6adc8;--red:#f38ba8;--yellow:#f1fa8c;
+  --orange:#fab387;--cyan:#89dceb;--code:#a6e3a1;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Meiryo UI',Arial,sans-serif;
+  font-size:14px;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
+
+/* ── HEADER ── */
+.app-header{background:#12121c;border-bottom:1px solid var(--border);padding:10px 14px;
+  display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
+.app-logo{font-size:22px;font-weight:900;color:var(--accent2);letter-spacing:2px;}
+.app-sub{font-size:11px;color:var(--accent);line-height:1.4;}
+.app-author{margin-left:auto;font-size:10px;color:var(--border);}
+
+/* ── MAIN TABS ── */
+.main-tabs{display:flex;overflow-x:auto;background:#12121c;border-bottom:2px solid var(--border);
+  scrollbar-width:none;flex-shrink:0;}
+.main-tabs::-webkit-scrollbar{display:none;}
+.mtab{padding:9px 13px;font-size:12px;font-weight:bold;color:var(--accent);cursor:pointer;
+  white-space:nowrap;border-radius:5px 5px 0 0;margin:4px 2px 0;border:1px solid transparent;
+  border-bottom:none;transition:all .15s;flex-shrink:0;}
+.mtab:hover{background:#2a2a3e;color:var(--text);}
+.mtab.active{background:var(--surface);color:#fff;border-color:var(--border);margin-bottom:-2px;}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:14px;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.sec-title{font-size:13px;font-weight:bold;color:var(--accent2);margin-bottom:12px;
+  padding-bottom:6px;border-bottom:1px solid var(--border);}
+
+/* ── CARDS ── */
+.row{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+.row>.card{flex:1;min-width:260px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;}
+.card-title{font-size:11.5px;font-weight:bold;color:var(--accent2);margin-bottom:10px;
+  padding-bottom:6px;border-bottom:1px solid var(--border);}
+
+/* ── FORM ── */
+.form-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;flex-wrap:wrap;}
+.form-row label{color:var(--text2);font-size:12px;min-width:0;flex:0 0 auto;max-width:100%;}
+.form-row label.w180{min-width:180px;}
+.form-row label.w120{min-width:120px;}
+input[type=text],input[type=number],select,textarea{
+  background:var(--surface2);color:var(--text);border:1px solid var(--accent);
+  border-radius:5px;padding:7px 10px;font-size:13px;font-family:inherit;
+  width:100%;outline:none;transition:border-color .15s;}
+input[type=text]:focus,select:focus{border-color:var(--accent2);}
+select{cursor:pointer;}
+.inp-sm{max-width:90px!important;}
+.inp-md{max-width:150px!important;}
+
+/* ── BUTTONS ── */
+.btn{background:var(--accent);color:#fff;border:none;border-radius:5px;padding:9px 16px;
+  font-size:13px;font-weight:bold;cursor:pointer;font-family:inherit;transition:background .15s;
+  display:inline-flex;align-items:center;gap:5px;}
+.btn:hover{filter:brightness(1.15);}
+.btn:active{filter:brightness(0.9);}
+.btn.green{background:var(--green2);}
+.btn.orange{background:#c97b30;}
+.btn.red{background:#8b3d3d;}
+.btn.gray{background:var(--border);}
+.btn.full{width:100%;}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+
+/* ── RESULT ── */
+.result{background:#12121c;border:1px solid var(--border);border-radius:5px;
+  padding:10px 12px;margin-top:10px;color:var(--green);font-weight:bold;
+  font-size:13px;min-height:42px;font-family:Consolas,monospace;white-space:pre-wrap;}
+.note{color:var(--accent);font-size:11px;font-style:italic;margin:4px 0 6px;}
+
+/* ── SECTION HEADER (colored) ── */
+.sh{border-radius:5px;padding:8px 12px;font-weight:bold;font-size:12px;
+  margin-bottom:10px;margin-top:4px;}
+.sh.blue{background:#1e3a5f;color:#fff;}
+.sh.green{background:#1a5c3a;color:#fff;}
+.sh.orange{background:#7a3a00;color:#fff;}
+.sh.purple{background:#3a1a6e;color:#fff;}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:6px 8px;color:var(--orange);font-size:12px;
+   border-bottom:1px solid var(--border);}
+td{padding:6px 8px;font-size:12px;border-bottom:1px solid #2a2a3e;}
+td.g{color:var(--green);} td.r{color:var(--red);}
+
+/* ── TEXTAREA CODE ── */
+textarea.code{background:#12121c;color:var(--code);border:1px solid var(--border);
+  border-radius:5px;font-family:Consolas,monospace;font-size:12px;
+  padding:8px;resize:vertical;}
+
+/* ── SUB TABS (Goc Xoay) ── */
+.sub-header{background:#1a1a2e;padding:12px 16px;border-bottom:1px solid var(--border);}
+.sub-header h2{font-size:16px;font-weight:bold;color:var(--text);}
+.sub-header p{font-size:11px;color:var(--accent);margin-top:3px;}
+.sub-tabs{display:flex;overflow-x:auto;background:#1a1a2e;
+  border-bottom:2px solid var(--border);scrollbar-width:none;}
+.sub-tabs::-webkit-scrollbar{display:none;}
+.stab{padding:8px 14px;font-size:11.5px;font-weight:bold;color:var(--accent);
+  cursor:pointer;white-space:nowrap;border-radius:4px 4px 0 0;
+  margin:4px 2px 0;border:1px solid transparent;border-bottom:none;
+  transition:all .15s;flex-shrink:0;}
+.stab:hover{background:var(--surface2);}
+.stab.active{background:var(--accent);color:#fff;border-color:var(--border);margin-bottom:-2px;}
+.sub-content{padding:14px;}
+.sub-pane{display:none;}
+.sub-pane.active{display:block;}
+
+/* ── PROFILES TABLE ── */
+.profile-table{width:100%;border-collapse:collapse;font-size:12px;}
+.profile-table th{background:var(--surface2);color:var(--accent2);padding:7px;
+  border:1px solid var(--border);}
+.profile-table td{padding:7px;border:1px solid var(--border);color:var(--text);}
+.profile-table tr:nth-child(even) td{background:#1e1e2e;}
+.profile-table tr:hover td{background:#313244;}
+
+/* ── ABOUT ── */
+.about-center{text-align:center;padding:30px 20px;}
+.about-name{font-size:38px;font-weight:900;color:var(--accent2);letter-spacing:5px;margin:10px 0 5px;}
+.about-sub{color:var(--cyan);font-size:14px;margin-bottom:4px;}
+.about-author{color:var(--orange);font-size:13px;font-weight:bold;margin-bottom:16px;}
+.about-sep{border:none;border-top:1px solid var(--border);margin:14px 0;}
+.about-feat{display:inline-block;text-align:left;font-size:12.5px;color:var(--text);line-height:2.2;}
+
+/* ── DENSITY TABLE ── */
+.dens-row{display:flex;justify-content:space-between;padding:5px 0;
+  border-bottom:1px solid #2a2a3e;font-size:12px;}
+.dens-val{color:var(--orange);font-weight:bold;}
+
+/* ── SAFETY ── */
+.safe-item{border-radius:6px;padding:10px 14px;margin-bottom:9px;}
+.safe-item.red{border:1px solid #f38ba855;}
+.safe-item .st{font-weight:bold;font-size:12.5px;margin-bottom:5px;}
+.safe-item.red .st{color:var(--red);}
+.safe-item.yel .st{color:var(--yellow);}
+.safe-item.grn .st{color:var(--green);}
+.safe-item.blu .st{color:var(--cyan);}
+.safe-item.yel{border:1px solid #f1fa8c55;}
+.safe-item.grn{border:1px solid #a6e3a155;}
+.safe-item.blu{border:1px solid #89dceb55;}
+.safe-desc{font-size:12px;color:var(--text2);line-height:1.6;}
+
+/* ── STATUS ── */
+.statusbar{background:#12121c;border-top:1px solid var(--border);
+  padding:5px 14px;font-size:11px;color:var(--green);flex-shrink:0;}
+
+/* ── MOBILE ── */
+@media(max-width:600px){
+  .row>.card{min-width:100%;}
+  .form-row{flex-direction:column;align-items:stretch;}
+  .form-row label.w180,.form-row label.w120{min-width:0;}
+  .app-sub{display:none;}
+  .btn-row{flex-direction:column;}
+  .inp-sm,.inp-md{max-width:100%!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="app-header">
+  <div>
+    <div class="app-logo">⚙️ KAYSCNC</div>
+    <div class="app-sub">CNCプログラミング支援 / Hỗ trợ lập trình CNC</div>
+  </div>
+  <div class="app-author">Created by CUONG</div>
+</div>
+
+<!-- MAIN TABS -->
+<div class="main-tabs" id="mainTabs">
+  <div class="mtab active" onclick="showTab(0)">🔄 Tốc độ</div>
+  <div class="mtab" onclick="showTab(1)">📐 Tọa độ</div>
+  <div class="mtab" onclick="showTab(2)">🔩 Ren</div>
+  <div class="mtab" onclick="showTab(3)">📐 Hình học</div>
+  <div class="mtab" onclick="showTab(4)">🔄 Đơn vị</div>
+  <div class="mtab" onclick="showTab(5)">⚖️ Vật liệu</div>
+  <div class="mtab" onclick="showTab(6)">⚙️ Gốc xoay</div>
+  <div class="mtab" onclick="showTab(7)">ℹ️ Về KAYSCNC</div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- ═══════════════ TAB 0: TỐC ĐỘ ═══════════════ -->
+<div class="tab-pane active" id="tp0">
+<div class="sec-title">🔄 Tốc độ cắt & Tiến dao / 切削速度・送り速度</div>
+<div class="row">
+  <div class="card">
+    <div class="card-title">Tính RPM từ Vc / VcからN計算</div>
+    <div class="form-row"><label class="w180">刃径 D / Đường kính D (mm):</label><input type="text" id="s_d1" value="10"></div>
+    <div class="form-row"><label class="w180">切削速度 Vc / Vận tốc Vc (m/min):</label><input type="text" id="s_vc" value="150"></div>
+    <div class="note">N = 1000 × Vc / (π × D)</div>
+    <button class="btn green full" onclick="calcRPM()">▶ Tính RPM / 計算</button>
+    <div class="result" id="r_rpm">N = ---</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Tính Vc từ RPM / NからVc計算</div>
+    <div class="form-row"><label class="w180">刃径 D / Đường kính D (mm):</label><input type="text" id="s_d2" value="10"></div>
+    <div class="form-row"><label class="w180">回転数 N / Số vòng quay N (rpm):</label><input type="text" id="s_n" value="5000"></div>
+    <div class="note">Vc = π × D × N / 1000</div>
+    <button class="btn green full" onclick="calcVc()">▶ Tính Vc / 計算</button>
+    <div class="result" id="r_vc">Vc = ---</div>
+  </div>
+</div>
+<div class="row">
+  <div class="card">
+    <div class="card-title">Tính tiến dao F / 送り速度計算 &nbsp; F = N × Z × fz</div>
+    <div class="form-row"><label class="w180">回転数 N / Số vòng quay N (rpm):</label><input type="text" id="s_fn" value="5000"></div>
+    <div class="form-row"><label class="w180">刃数 Z / Số răng Z:</label><input type="text" id="s_fz" value="4"></div>
+    <div class="form-row"><label class="w180">一刃送り fz / Tiến dao/răng (mm/tooth):</label><input type="text" id="s_fzv" value="0.05"></div>
+    <button class="btn green full" onclick="calcFeed()">▶ Tính F / 計算</button>
+    <div class="result" id="r_feed">F = ---</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Bảng Vc tham khảo / 切削速度参考表 (m/min)</div>
+    <table>
+      <tr><th>材料 / Vật liệu</th><th>HSS</th><th>Carbide</th></tr>
+      <tr><td>鋼 S45C / Thép C45</td><td class="r">20–40</td><td class="g">80–150</td></tr>
+      <tr><td>ステンレス SUS304</td><td class="r">10–20</td><td class="g">40–80</td></tr>
+      <tr><td>アルミ Al / Nhôm</td><td class="r">100–200</td><td class="g">300–800</td></tr>
+      <tr><td>鋳鉄 FC / Gang</td><td class="r">15–30</td><td class="g">60–120</td></tr>
+      <tr><td>銅 Cu / Đồng</td><td class="r">40–80</td><td class="g">100–250</td></tr>
+      <tr><td>チタン Ti / Titan</td><td class="r">5–15</td><td class="g">30–60</td></tr>
+      <tr><td>焼入鋼 SKD11</td><td class="r">8–15</td><td class="g">40–70</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════ TAB 1: TỌA ĐỘ ═══════════════ -->
+<div class="tab-pane" id="tp1">
+<div class="sec-title">📐 Tọa độ & Xoay / 座標・回転計算</div>
+<div class="row">
+  <div class="card">
+    <div class="card-title">Xoay tọa độ / 座標回転</div>
+    <div class="form-row"><label class="w180">X gốc:</label><input type="text" id="c_rx" value="100"></div>
+    <div class="form-row"><label class="w180">Y gốc:</label><input type="text" id="c_ry" value="50"></div>
+    <div class="form-row"><label class="w180">Góc θ (°):</label><input type="text" id="c_ra" value="45"></div>
+    <div class="form-row"><label class="w180">X tâm xoay:</label><input type="text" id="c_rcx" value="0"></div>
+    <div class="form-row"><label class="w180">Y tâm xoay:</label><input type="text" id="c_rcy" value="0"></div>
+    <div class="note">X'=cx+(X-cx)cosθ−(Y-cy)sinθ</div>
+    <button class="btn green full" onclick="calcRot()">▶ Tính / 計算</button>
+    <div class="result" id="r_rot">---</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Tính 2 điểm / 2点間計算</div>
+    <div class="form-row"><label class="w120">X1:</label><input type="text" id="c_x1" value="0"></div>
+    <div class="form-row"><label class="w120">Y1:</label><input type="text" id="c_y1" value="0"></div>
+    <div class="form-row"><label class="w120">X2:</label><input type="text" id="c_x2" value="100"></div>
+    <div class="form-row"><label class="w120">Y2:</label><input type="text" id="c_y2" value="100"></div>
+    <button class="btn green full" onclick="calc2pt()">▶ Tính / 計算</button>
+    <div class="result" id="r_2pt">---</div>
+  </div>
+</div>
+<div class="row">
+  <div class="card">
+    <div class="card-title">Tìm tâm 3 điểm / 3点から円中心</div>
+    <div class="form-row"><label class="w120">P1: X=</label><input type="text" id="c_p1x" value="0" class="inp-sm">&nbsp;Y=<input type="text" id="c_p1y" value="0" class="inp-sm" style="margin-left:6px"></div>
+    <div class="form-row"><label class="w120">P2: X=</label><input type="text" id="c_p2x" value="100" class="inp-sm">&nbsp;Y=<input type="text" id="c_p2y" value="0" class="inp-sm" style="margin-left:6px"></div>
+    <div class="form-row"><label class="w120">P3: X=</label><input type="text" id="c_p3x" value="50" class="inp-sm">&nbsp;Y=<input type="text" id="c_p3y" value="80" class="inp-sm" style="margin-left:6px"></div>
+    <div class="note">行列式クラメル則 / Định thức Cramer</div>
+    <button class="btn green full" onclick="calcCircle()">▶ Tìm tâm & R / 計算</button>
+    <div class="result" id="r_circle">---</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Tọa độ Cực ↔ Đề-các / 極座標↔直交座標</div>
+    <div class="form-row"><label class="w120">Bán kính R:</label><input type="text" id="c_pr" value="100"></div>
+    <div class="form-row"><label class="w120">Góc θ (°):</label><input type="text" id="c_pt" value="45"></div>
+    <button class="btn green full" onclick="p2xy()">▶ Cực → XY</button>
+    <div class="result" id="r_p2xy">---</div>
+    <div class="form-row" style="margin-top:10px"><label class="w120">X:</label><input type="text" id="c_pxx" value="70.711"></div>
+    <div class="form-row"><label class="w120">Y:</label><input type="text" id="c_pyy" value="70.711"></div>
+    <button class="btn green full" onclick="xy2p()">▶ XY → Cực</button>
+    <div class="result" id="r_xy2p">---</div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════ TAB 2: REN ═══════════════ -->
+<div class="tab-pane" id="tp2">
+<div class="sec-title">🔩 Tính toán Ren / ねじ計算</div>
+<div class="row">
+  <div class="card">
+    <div class="card-title">Tra bảng ren Metric ISO / メートルねじ規格表</div>
+    <div class="form-row"><label class="w120">Chọn ren:</label>
+      <select id="t_sel" onchange="lookupThread()">
+        <option>M2</option><option>M2.5</option><option>M3</option><option>M4</option>
+        <option>M5</option><option>M6</option><option selected>M8</option><option>M10</option>
+        <option>M12</option><option>M14</option><option>M16</option><option>M18</option>
+        <option>M20</option><option>M22</option><option>M24</option><option>M27</option>
+        <option>M30</option><option>M33</option><option>M36</option><option>M42</option>
+        <option>M48</option><option>M52</option><option>M56</option>
+      </select>
+    </div>
+    <div class="result" id="r_tlu">---</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Tính ren tùy chỉnh / 任意ねじ計算</div>
+    <div class="form-row"><label class="w180">Đường kính ngoài D (mm):</label><input type="text" id="t_td" value="10"></div>
+    <div class="form-row"><label class="w180">Bước ren P (mm):</label><input type="text" id="t_tp" value="1.5"></div>
+    <div class="note">d2=D−0.6495P &nbsp; d1=D−1.2269P</div>
+    <button class="btn green full" onclick="calcCustomThread()">▶ Tính / 計算</button>
+    <div class="result" id="r_ct">---</div>
+  </div>
+</div>
+<div class="row">
+  <div class="card">
+    <div class="card-title">Mũi khoan tạo lỗ ren / タップ下穴径計算</div>
+    <div class="form-row"><label class="w180">Đường kính ren D (mm):</label><input type="text" id="t_dd" value="10"></div>
+    <div class="form-row"><label class="w180">Bước ren P (mm):</label><input type="text" id="t_dp" value="1.5"></div>
+    <div class="form-row"><label class="w180">Tỷ lệ ăn khớp:</label>
+      <select id="t_eng">
+        <option>75% — Tiêu chuẩn</option>
+        <option>65% — Vật liệu cứng</option>
+        <option>85% — Lực kéo cao</option>
+      </select>
+    </div>
+    <button class="btn green full" onclick="calcDrill()">▶ Tính mũi khoan</button>
+    <div class="result" id="r_dr">---</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Tạo G-code Tapping / タッピングGコード生成</div>
+    <div class="form-row"><label class="w120">D (mm):</label><input type="text" id="t_gd" value="10"></div>
+    <div class="form-row"><label class="w120">P (mm):</label><input type="text" id="t_gp" value="1.5"></div>
+    <div class="form-row"><label class="w120">Z sâu (mm):</label><input type="text" id="t_gz" value="-20"></div>
+    <div class="form-row"><label class="w120">S (rpm):</label><input type="text" id="t_gs" value="500"></div>
+    <div class="form-row"><label class="w120">Controller:</label>
+      <select id="t_ctrl"><option>Fanuc</option><option>OSP (Okuma)</option></select>
+    </div>
+    <button class="btn green full" onclick="genGcode()">▶ Tạo G-code</button>
+    <textarea class="code full" id="r_gc" rows="4" style="width:100%;margin-top:8px"></textarea>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════ TAB 3: HÌNH HỌC ═══════════════ -->
+<div class="tab-pane" id="tp3">
+<div class="sec-title">📐 Hình học & Lượng giác / 幾何学・三角関数</div>
+<div class="row">
+  <div class="card">
+    <div class="card-title">Lượng giác / 三角関数</div>
+    <div class="form-row"><label class="w120">Góc (°):</label><input type="text" id="g_a" value="45"></div>
+    <button class="btn green full" onclick="calcTrig()">▶ Tính / 計算</button>
+    <div class="result" id="r_trig">---</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Đa giác đều / 正多角形</div>
+    <div class="form-row"><label class="w120">Số cạnh N:</label><input type="text" id="g_pn" value="6"></div>
+    <div class="form-row"><label class="w120">Bán kính R (mm):</label><input type="text" id="g_pr" value="50"></div>
+    <button class="btn green full" onclick="calcPoly()">▶ Tính / 計算</button>
+    <div class="result" id="r_poly">---</div>
+  </div>
+</div>
+<div class="row">
+  <div class="card">
+    <div class="card-title">Đổi Độ-Phút-Giây ↔ Thập phân / 度分秒↔十進数</div>
+    <div class="form-row">
+      <label style="min-width:40px">Độ°:</label><input type="text" id="g_dd" value="45" class="inp-sm">
+      <label style="min-width:40px;margin-left:6px">Phút':</label><input type="text" id="g_dm" value="30" class="inp-sm">
+      <label style="min-width:40px;margin-left:6px">Giây'':</label><input type="text" id="g_ds" value="15" class="inp-sm">
+    </div>
+    <div class="btn-row">
+      <button class="btn green" onclick="dms2dec()">DMS → Thập phân</button>
+      <button class="btn green" onclick="dec2dms()">Thập phân → DMS</button>
+    </div>
+    <div class="form-row" style="margin-top:8px"><label class="w120">Thập phân°:</label><input type="text" id="g_din" value="45.5042"></div>
+    <div class="result" id="r_dms">---</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Diện tích & Chu vi / 面積・周長</div>
+    <div class="form-row"><label class="w120">⬤ Đường kính D (mm):</label><input type="text" id="g_cd" value="50"></div>
+    <div class="form-row"><label class="w120">▭ Rộng W (mm):</label><input type="text" id="g_rw" value="100"></div>
+    <div class="form-row"><label class="w120">▭ Cao H (mm):</label><input type="text" id="g_rh" value="60"></div>
+    <div class="form-row"><label class="w120">▲ Đáy b (mm):</label><input type="text" id="g_tb" value="80"></div>
+    <div class="form-row"><label class="w120">▲ Cao h (mm):</label><input type="text" id="g_th" value="50"></div>
+    <button class="btn green full" onclick="calcAreas()">▶ Tính tất cả</button>
+    <div class="result" id="r_area">---</div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════ TAB 4: ĐƠN VỊ ═══════════════ -->
+<div class="tab-pane" id="tp4">
+<div class="sec-title">🔄 Chuyển đổi đơn vị / 単位換算</div>
+<div class="row">
+  <div class="card">
+    <div class="card-title">Chiều dài / 長さ</div>
+    <div class="form-row"><label class="w120">mm:</label><input type="text" id="u_mm" value="25.4"></div>
+    <div class="form-row"><label class="w120">inch:</label><input type="text" id="u_in" value="1.0"></div>
+    <div class="btn-row">
+      <button class="btn green" onclick="u_len('mm')">mm → inch</button>
+      <button class="btn green" onclick="u_len('in')">inch → mm</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Tốc độ bề mặt / 切削速度</div>
+    <div class="form-row"><label class="w120">m/min:</label><input type="text" id="u_vm" value="100"></div>
+    <div class="form-row"><label class="w120">m/s:</label><input type="text" id="u_vs" value="1.667"></div>
+    <div class="form-row"><label class="w120">ft/min:</label><input type="text" id="u_vf" value="328.08"></div>
+    <button class="btn green full" onclick="u_spd()">m/min →</button>
+  </div>
+</div>
+<div class="row">
+  <div class="card">
+    <div class="card-title">Áp suất / 圧力</div>
+    <div class="form-row"><label class="w120">MPa:</label><input type="text" id="u_mpa" value="1.0"></div>
+    <div class="form-row"><label class="w120">kgf/cm²:</label><input type="text" id="u_kgc" value="10.197"></div>
+    <div class="form-row"><label class="w120">PSI:</label><input type="text" id="u_psi" value="145.04"></div>
+    <button class="btn green full" onclick="u_pres()">MPa →</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Moment xoắn / トルク</div>
+    <div class="form-row"><label class="w120">N·m:</label><input type="text" id="u_nm" value="10.0"></div>
+    <div class="form-row"><label class="w120">kgf·cm:</label><input type="text" id="u_kgcm" value="101.97"></div>
+    <div class="form-row"><label class="w120">lbf·ft:</label><input type="text" id="u_lbft" value="7.376"></div>
+    <button class="btn green full" onclick="u_torq()">N·m →</button>
+  </div>
+</div>
+<div class="row">
+  <div class="card">
+    <div class="card-title">Nhiệt độ / 温度</div>
+    <div class="form-row"><label class="w120">°C:</label><input type="text" id="u_dc" value="20"></div>
+    <div class="form-row"><label class="w120">°F:</label><input type="text" id="u_df" value="68"></div>
+    <div class="btn-row">
+      <button class="btn green" onclick="u_temp('c')">°C → °F</button>
+      <button class="btn green" onclick="u_temp('f')">°F → °C</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">mm/rev ↔ mm/min</div>
+    <div class="form-row"><label class="w120">mm/rev:</label><input type="text" id="u_fr" value="0.1"></div>
+    <div class="form-row"><label class="w120">N (rpm):</label><input type="text" id="u_frpm" value="1000"></div>
+    <div class="form-row"><label class="w120">mm/min:</label><input type="text" id="u_fmm" value="100"></div>
+    <div class="btn-row">
+      <button class="btn green" onclick="u_feed('r')">rev → min</button>
+      <button class="btn green" onclick="u_feed('m')">min → rev</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════ TAB 5: VẬT LIỆU ═══════════════ -->
+<div class="tab-pane" id="tp5">
+<div class="sec-title">⚖️ Tính khối lượng vật liệu / 材料重量計算</div>
+<div class="row">
+  <div class="card">
+    <div class="card-title">Khối chữ nhật / 直方体</div>
+    <div class="form-row"><label class="w120">Vật liệu:</label>
+      <select id="m_mat1">
+        <option value="7.85">鋼 S45C / Thép C45</option>
+        <option value="7.70">ダイス鋼 SKD11</option>
+        <option value="7.93">ステンレス SUS304</option>
+        <option value="2.70">アルミ Al6061 / Nhôm</option>
+        <option value="2.81">アルミ Al7075</option>
+        <option value="8.96">銅 Cu / Đồng</option>
+        <option value="8.50">黄銅 Brass / Đồng thau</option>
+        <option value="7.20">鋳鉄 FC / Gang</option>
+        <option value="4.43">チタン Ti-6Al / Titan</option>
+        <option value="1.14">ナイロン / Nylon</option>
+      </select>
+    </div>
+    <div class="form-row"><label class="w120">Dài L (mm):</label><input type="text" id="m_bl" value="200"></div>
+    <div class="form-row"><label class="w120">Rộng W (mm):</label><input type="text" id="m_bw" value="150"></div>
+    <div class="form-row"><label class="w120">Cao H (mm):</label><input type="text" id="m_bh" value="50"></div>
+    <button class="btn green full" onclick="calcBlock()">▶ Tính / 計算</button>
+    <div class="result" id="r_bl">---</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Hình trụ / 円柱</div>
+    <div class="form-row"><label class="w120">Vật liệu:</label>
+      <select id="m_mat2">
+        <option value="7.85">鋼 S45C / Thép C45</option>
+        <option value="2.70">アルミ Al6061</option>
+        <option value="7.93">ステンレス SUS304</option>
+        <option value="4.43">チタン Ti</option>
+        <option value="8.96">銅 Cu</option>
+      </select>
+    </div>
+    <div class="form-row"><label class="w120">Đường kính D (mm):</label><input type="text" id="m_cd" value="80"></div>
+    <div class="form-row"><label class="w120">Chiều dài L (mm):</label><input type="text" id="m_cl" value="200"></div>
+    <button class="btn green full" onclick="calcCyl()">▶ Tính / 計算</button>
+    <div class="result" id="r_cy">---</div>
+  </div>
+</div>
+<div class="row">
+  <div class="card">
+    <div class="card-title">Ống tròn / 中空円柱</div>
+    <div class="form-row"><label class="w120">Vật liệu:</label>
+      <select id="m_mat3">
+        <option value="7.85">鋼 S45C / Thép C45</option>
+        <option value="7.93">ステンレス SUS304</option>
+        <option value="2.70">アルミ Al6061</option>
+      </select>
+    </div>
+    <div class="form-row"><label class="w120">D ngoài (mm):</label><input type="text" id="m_to" value="60"></div>
+    <div class="form-row"><label class="w120">D trong (mm):</label><input type="text" id="m_ti" value="50"></div>
+    <div class="form-row"><label class="w120">Chiều dài L (mm):</label><input type="text" id="m_tl" value="200"></div>
+    <button class="btn green full" onclick="calcTube()">▶ Tính / 計算</button>
+    <div class="result" id="r_tu">---</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Khối lượng riêng / 密度表 (g/cm³)</div>
+    <div class="dens-row"><span>鋼 S45C / Thép C45</span><span class="dens-val">7.85</span></div>
+    <div class="dens-row"><span>ダイス鋼 SKD11</span><span class="dens-val">7.70</span></div>
+    <div class="dens-row"><span>ステンレス SUS304</span><span class="dens-val">7.93</span></div>
+    <div class="dens-row"><span>アルミ Al6061 / Nhôm</span><span class="dens-val">2.70</span></div>
+    <div class="dens-row"><span>銅 Cu / Đồng</span><span class="dens-val">8.96</span></div>
+    <div class="dens-row"><span>鋳鉄 FC / Gang</span><span class="dens-val">7.20</span></div>
+    <div class="dens-row"><span>チタン Ti-6Al-4V</span><span class="dens-val">4.43</span></div>
+    <div class="dens-row"><span>ナイロン / Nylon</span><span class="dens-val">1.14</span></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════ TAB 6: GỐC XOAY ═══════════════ -->
+<div class="tab-pane" id="tp6">
+<div class="sub-header">
+  <h2>⚙️ Gốc xoay tool / 割り出し原点ツール</h2>
+  <p>Tính tọa độ offset sau khi xoay A/B &bull; 3+2 index &bull; Lưu/Nạp hồ sơ tâm xoay</p>
+</div>
+<div class="sub-tabs">
+  <div class="stab active" onclick="showSub(0)">1 Tính gốc xoay</div>
+  <div class="stab" onclick="showSub(1)">2 Dò tâm xoay</div>
+  <div class="stab" onclick="showSub(2)">3 Tính 3+2 index</div>
+  <div class="stab" onclick="showSub(3)">4 Dò tâm 3+2</div>
+  <div class="stab" onclick="showSub(4)">5 Hướng dẫn</div>
+  <div class="stab" onclick="showSub(5)">6 Hồ sơ đã lưu</div>
+</div>
+<div class="sub-content">
+
+<!-- SUB 1 -->
+<div class="sub-pane active" id="sp0">
+  <div class="sh blue">1) Trục xoay và góc / 回転軸と角度</div>
+  <div class="form-row"><label class="w180">Trục / 軸:</label>
+    <select id="gx_axis1">
+      <option>B — quanh Y (around Y)</option>
+      <option>A — quanh X (around X)</option>
+      <option>C — quanh Z (around Z)</option>
+    </select>
+  </div>
+  <div class="form-row"><label class="w180">Góc xoay θ (°):</label><input type="text" id="gx_theta1" value="90"></div>
+  <div class="sh green" style="margin-top:10px">2) Tâm xoay (Xc, Yc, Zc) / 回転中心座標</div>
+  <div class="row">
+    <div style="flex:1;min-width:80px"><label>Xc:</label><input type="text" id="gx_xc1" value="0"></div>
+    <div style="flex:1;min-width:80px"><label>Yc:</label><input type="text" id="gx_yc1" value="0"></div>
+    <div style="flex:1;min-width:80px"><label>Zc:</label><input type="text" id="gx_zc1" value="0"></div>
+  </div>
+  <button class="btn gray" onclick="loadProfileToTab1()" style="margin-bottom:10px">📂 Nạp từ hồ sơ</button>
+  <div class="sh orange">3) Gốc WCS hiện tại G54 / 現在のWCS原点</div>
+  <div class="row">
+    <div style="flex:1;min-width:80px"><label>X0:</label><input type="text" id="gx_x0" value="0"></div>
+    <div style="flex:1;min-width:80px"><label>Y0:</label><input type="text" id="gx_y0" value="0"></div>
+    <div style="flex:1;min-width:80px"><label>Z0:</label><input type="text" id="gx_z0" value="0"></div>
+  </div>
+  <button class="btn green full" style="margin-top:10px" onclick="calcNewWCS()">▶ TÍNH GỐC XOAY / 回転後の原点を計算</button>
+  <div class="sh purple" style="margin-top:10px">Kết quả — G54 mới sau khi xoay</div>
+  <div class="result" id="r_gx1">---</div>
+</div>
+
+<!-- SUB 2 -->
+<div class="sub-pane" id="sp1">
+  <div style="background:#1e1e2e;border-radius:5px;padding:10px;margin-bottom:10px;color:var(--text2);font-size:12px">
+    Đo cùng một điểm vật lý ở hai góc khác nhau → App tính ra Xc/Yc/Zc tâm xoay thực tế.
+  </div>
+  <div class="sh blue">1) Chọn trục và góc đo</div>
+  <div class="form-row"><label class="w180">Trục:</label>
+    <select id="gx_axis2">
+      <option>B — quanh Y</option><option>A — quanh X</option><option>C — quanh Z</option>
+    </select>
+  </div>
+  <div class="row">
+    <div style="flex:1"><label>Góc ban đầu θ1 (°):</label><input type="text" id="gx_t1" value="0"></div>
+    <div style="flex:1"><label>Góc mới θ2 (°):</label><input type="text" id="gx_t2" value="90"></div>
+  </div>
+  <div class="row">
+    <div class="card" style="border-color:#1a5c3a">
+      <div class="card-title" style="color:var(--green)">2) Tọa độ đo tại θ1</div>
+      <div class="form-row"><label class="w120">X trước:</label><input type="text" id="gx_x1" value="0"></div>
+      <div class="form-row"><label class="w120">Y trước:</label><input type="text" id="gx_y1" value="0"></div>
+      <div class="form-row"><label class="w120">Z trước:</label><input type="text" id="gx_z1" value="0"></div>
+    </div>
+    <div class="card" style="border-color:#7a3a00">
+      <div class="card-title" style="color:var(--orange)">3) Tọa độ đo tại θ2</div>
+      <div class="form-row"><label class="w120">X sau:</label><input type="text" id="gx_x2" value="0"></div>
+      <div class="form-row"><label class="w120">Y sau:</label><input type="text" id="gx_y2" value="0"></div>
+      <div class="form-row"><label class="w120">Z sau:</label><input type="text" id="gx_z2" value="0"></div>
+    </div>
+  </div>
+  <div class="sh purple">4) Tính tâm xoay và lưu hồ sơ</div>
+  <div class="btn-row">
+    <button class="btn green" onclick="calcRotCenter()">▶ TÍNH TÂM XOAY</button>
+    <button class="btn" onclick="sendToTab1()">→ Đưa sang Tab 1</button>
+    <button class="btn orange" onclick="saveProfile()">💾 Lưu hồ sơ</button>
+    <button class="btn gray" onclick="document.getElementById('r_gx2').textContent='---'">🗑️ Xóa</button>
+  </div>
+  <div class="result" id="r_gx2">---</div>
+</div>
+
+<!-- SUB 3 -->
+<div class="sub-pane" id="sp2">
+  <div class="sh blue">1) Tâm xoay / 回転中心</div>
+  <div class="row">
+    <div style="flex:1"><label>Xc:</label><input type="text" id="gx_xc3" value="0"></div>
+    <div style="flex:1"><label>Yc:</label><input type="text" id="gx_yc3" value="0"></div>
+    <div style="flex:1"><label>Zc:</label><input type="text" id="gx_zc3" value="0"></div>
+  </div>
+  <button class="btn gray" onclick="loadProfileToTab3()" style="margin-bottom:10px">📂 Nạp hồ sơ</button>
+  <div class="sh green">2) Gốc WCS ban đầu (tại B=0) / 初期WCS原点</div>
+  <div class="row">
+    <div style="flex:1"><label>X0:</label><input type="text" id="gx_x03" value="0"></div>
+    <div style="flex:1"><label>Y0:</label><input type="text" id="gx_y03" value="0"></div>
+    <div style="flex:1"><label>Z0:</label><input type="text" id="gx_z03" value="0"></div>
+  </div>
+  <div class="sh orange" style="margin-top:10px">3) Danh sách góc index / 割り出し角度リスト</div>
+  <div class="form-row"><label class="w120">Trục:</label>
+    <select id="gx_axis3"><option>B — quanh Y</option><option>A — quanh X</option><option>C — quanh Z</option></select>
+  </div>
+  <div class="form-row"><label class="w180">Các góc (°), cách nhau dấu phẩy:</label>
+    <input type="text" id="gx_angles" value="0, 90, 180, 270">
+  </div>
+  <button class="btn green full" style="margin-top:8px" onclick="calc3plus2()">▶ TÍNH TẤT CẢ CÁC MẶT</button>
+  <div class="sh purple" style="margin-top:10px">Kết quả G54 cho từng mặt</div>
+  <textarea class="code" id="r_gx3" rows="8" style="width:100%;margin-top:8px" readonly></textarea>
+  <button class="btn gray" style="margin-top:6px" onclick="copyText('r_gx3')">📋 Sao chép</button>
+</div>
+
+<!-- SUB 4 -->
+<div class="sub-pane" id="sp3">
+  <div style="background:#1e1e2e;border-radius:5px;padding:10px;margin-bottom:10px;color:var(--text2);font-size:12px">
+    Chi tiết đã ở vị trí 3+2 (đã xoay). Probe 1 điểm đã biết tọa độ cục bộ → App tính G54 cần đặt.
+  </div>
+  <div class="sh blue">1) Góc 3+2 và tâm xoay</div>
+  <div class="form-row"><label class="w120">Trục:</label>
+    <select id="gx_axis4"><option>B — quanh Y</option><option>A — quanh X</option></select>
+  </div>
+  <div class="form-row"><label class="w120">Góc hiện tại θ (°):</label><input type="text" id="gx_theta4" value="90"></div>
+  <div class="row">
+    <div style="flex:1"><label>Xc:</label><input type="text" id="gx_xc4" value="0"></div>
+    <div style="flex:1"><label>Yc:</label><input type="text" id="gx_yc4" value="0"></div>
+    <div style="flex:1"><label>Zc:</label><input type="text" id="gx_zc4" value="0"></div>
+  </div>
+  <button class="btn gray" onclick="loadProfileToTab4()" style="margin-bottom:10px">📂 Nạp hồ sơ</button>
+  <div class="row">
+    <div class="card" style="border-color:#1a5c3a">
+      <div class="card-title" style="color:var(--green)">2) Tọa độ máy đo được (Xm, Ym, Zm)</div>
+      <div class="form-row"><label class="w120">Xm:</label><input type="text" id="gx_xp" value="0"></div>
+      <div class="form-row"><label class="w120">Ym:</label><input type="text" id="gx_yp" value="0"></div>
+      <div class="form-row"><label class="w120">Zm:</label><input type="text" id="gx_zp" value="0"></div>
+    </div>
+    <div class="card" style="border-color:#7a3a00">
+      <div class="card-title" style="color:var(--orange)">3) Tọa độ cục bộ điểm đó (Xl, Yl, Zl)</div>
+      <div class="form-row"><label class="w120">Xl:</label><input type="text" id="gx_xl" value="0"></div>
+      <div class="form-row"><label class="w120">Yl:</label><input type="text" id="gx_yl" value="0"></div>
+      <div class="form-row"><label class="w120">Zl:</label><input type="text" id="gx_zl" value="0"></div>
+    </div>
+  </div>
+  <button class="btn green full" style="margin-top:8px" onclick="calcWCS32()">▶ TÍNH G54 MỚI</button>
+  <div class="sh purple" style="margin-top:10px">Kết quả G54 cần đặt</div>
+  <div class="result" id="r_gx4">---</div>
+</div>
+
+<!-- SUB 5: HƯỚNG DẪN -->
+<div class="sub-pane" id="sp4">
+  <div class="sh blue">🔵 Tab 1 — Tính gốc xoay</div>
+  <div style="color:var(--text2);font-size:12px;line-height:1.8;padding:8px;background:#1e1e2e;border-radius:5px;margin-bottom:10px">
+    Dùng khi ĐÃ BIẾT tâm xoay. Quy trình:<br>
+    1. Nhập Xc, Yc, Zc — hoặc nạp từ hồ sơ đã lưu ở Tab 2<br>
+    2. Nhập G54 hiện tại (đo tại B=0°)<br>
+    3. Chọn trục và nhập góc xoay θ<br>
+    4. Bấm tính → ra G54 mới cần đặt vào máy<br><br>
+    Công thức B-axis: X_new = Xc + (X0-Xc)cosθ − (Z0-Zc)sinθ
+  </div>
+  <div class="sh green">🟢 Tab 2 — Dò tâm xoay</div>
+  <div style="color:var(--text2);font-size:12px;line-height:1.8;padding:8px;background:#1e1e2e;border-radius:5px;margin-bottom:10px">
+    Dùng khi CHƯA BIẾT tâm xoay. Quy trình:<br>
+    1. Xoay bàn về θ1 (vd: B=0°) → probe/đo tọa độ điểm chuẩn → nhập X1,Y1,Z1<br>
+    2. Xoay sang θ2 (vd: B=90°) → đo lại cùng điểm → nhập X2,Y2,Z2<br>
+    3. Bấm "Tính tâm xoay" → ra Xc, Yc, Zc<br>
+    4. Lưu vào hồ sơ để dùng lại<br><br>
+    ⚠️ Hai góc càng xa nhau (90° hoặc 180°) → kết quả càng chính xác
+  </div>
+  <div class="sh orange">🟠 Tab 3 — Tính 3+2 index</div>
+  <div style="color:var(--text2);font-size:12px;line-height:1.8;padding:8px;background:#1e1e2e;border-radius:5px;margin-bottom:10px">
+    Gia công nhiều mặt, cần G54 cho từng mặt:<br>
+    1. Nạp tâm xoay từ hồ sơ (Tab 2)<br>
+    2. Nhập G54 ban đầu (tại B=0°)<br>
+    3. Nhập danh sách góc: 0, 90, 180, 270<br>
+    4. App tính G54 cho tất cả các mặt → copy vào máy
+  </div>
+  <div class="sh purple">🟣 Tab 4 — Dò tâm 3+2</div>
+  <div style="color:var(--text2);font-size:12px;line-height:1.8;padding:8px;background:#1e1e2e;border-radius:5px">
+    Chi tiết đã kẹp ở vị trí 3+2, cần tìm gốc G54:<br>
+    1. Đặt bàn xoay ở góc cần gia công (vd: B=45°)<br>
+    2. Nhập tâm xoay và góc<br>
+    3. Probe một điểm đã biết tọa độ cục bộ → nhập Xm, Ym, Zm<br>
+    4. Nhập tọa độ cục bộ của điểm đó (vd: 0,0,0 nếu là gốc)<br>
+    5. Bấm tính → ra G54 cần đặt<br><br>
+    Áp dụng cho: Tsudakoma TWA-130 + OKK VM43R
+  </div>
+</div>
+
+<!-- SUB 6: HỒ SƠ -->
+<div class="sub-pane" id="sp5">
+  <div class="sh blue">📁 Hồ sơ tâm xoay đã lưu / 保存済みプロファイル</div>
+  <div class="btn-row" style="margin-bottom:10px">
+    <button class="btn green" onclick="loadProfileToTab1FromTable()">📂 Nạp → Tab 1</button>
+    <button class="btn red" onclick="deleteProfile()">🗑️ Xóa</button>
+    <button class="btn gray" onclick="exportProfiles()">💾 Xuất JSON</button>
+    <button class="btn gray" onclick="importProfiles()">📥 Nhập JSON</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importFromFile(this)">
+  </div>
+  <div style="overflow-x:auto">
+    <table class="profile-table" id="profileTable">
+      <tr><th>#</th><th>Tên / 名前</th><th>Trục</th><th>Xc</th><th>Yc</th><th>Zc</th><th>Ngày</th></tr>
+    </table>
+  </div>
+  <div id="noProfiles" style="text-align:center;padding:20px;color:var(--text2);font-size:13px">
+    Chưa có hồ sơ. Dò tâm xoay ở Tab 2 rồi lưu lại.
+  </div>
+</div>
+
+</div><!-- end sub-content -->
+</div>
+
+<!-- ═══════════════ TAB 7: GIỚI THIỆU ═══════════════ -->
+<div class="tab-pane" id="tp7">
+<div class="about-center">
+  <div style="font-size:50px">⚙️</div>
+  <div class="about-name">KAYSCNC</div>
+  <div class="about-sub">CNCプログラミング支援ソフト / Phần mềm hỗ trợ lập trình CNC</div>
+  <div class="about-author">Created by &nbsp; C U O N G</div>
+  <hr class="about-sep">
+  <div style="color:var(--green);font-size:12px;margin-bottom:14px">
+    対応コントローラ / Hệ điều khiển: &nbsp;<strong>Fanuc &nbsp;|&nbsp; OSP – Okuma</strong>
+  </div>
+  <div class="about-feat">
+    ✅ &nbsp;切削速度・送り / Tốc độ cắt, tiến dao<br>
+    ✅ &nbsp;座標・回転 / Tọa độ, xoay tọa độ, tìm tâm 3 điểm<br>
+    ✅ &nbsp;ねじ計算 / Tính ren, tra bảng ISO, G-code tapping<br>
+    ✅ &nbsp;幾何学・三角関数 / Hình học, lượng giác, DMS<br>
+    ✅ &nbsp;単位換算 / Chuyển đổi đơn vị (6 loại)<br>
+    ✅ &nbsp;材料重量 / Tính khối lượng vật liệu<br>
+    ✅ &nbsp;Gốc xoay tool / 割り出し原点ツール (6 tính năng)<br>
+    ✅ &nbsp;Lưu hồ sơ tâm xoay / プロファイル保存 (LocalStorage)<br>
+  </div>
+  <hr class="about-sep">
+  <div style="color:var(--border);font-size:11px">
+    Version 1.0 &nbsp;|&nbsp; HTML5 Offline App &nbsp;|&nbsp; KAYSCNC © CUONG<br>
+    Không cần internet / インターネット不要 — Chạy offline hoàn toàn
+  </div>
+</div>
+</div>
+
+</div><!-- end content -->
+
+<div class="statusbar">✅ KAYSCNC v1.0 &nbsp;|&nbsp; Created by CUONG &nbsp;|&nbsp; Fanuc & OSP &nbsp;|&nbsp; Offline Ready</div>
+
+<script>
+const PI = Math.PI;
+const f = id => parseFloat(document.getElementById(id).value) || 0;
+const s = (id, v) => document.getElementById(id).textContent = v;
+const sv = (id, v) => document.getElementById(id).value = v;
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+function showTab(i){
+  document.querySelectorAll('.mtab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('.tab-pane').forEach((p,j)=>p.classList.toggle('active',i===j));
+}
+function showSub(i){
+  document.querySelectorAll('.stab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('.sub-pane').forEach((p,j)=>p.classList.toggle('active',i===j));
+}
+
+// ── TAB 0: SPEED ─────────────────────────────────────────────────────────
+function calcRPM(){try{const d=f('s_d1'),v=f('s_vc');s('r_rpm',`N = ${(1000*v/(PI*d)).toFixed(0)} rpm`);}catch(e){}}
+function calcVc(){try{const d=f('s_d2'),n=f('s_n');s('r_vc',`Vc = ${(PI*d*n/1000).toFixed(2)} m/min`);}catch(e){}}
+function calcFeed(){try{const n=f('s_fn'),z=f('s_fz'),fz=f('s_fzv');s('r_feed',`F = ${(n*z*fz).toFixed(1)} mm/min   |   fz = ${fz.toFixed(4)} mm/tooth`);}catch(e){}}
+
+// ── TAB 1: COORDS ────────────────────────────────────────────────────────
+function calcRot(){
+  try{
+    const x=f('c_rx'),y=f('c_ry'),a=f('c_ra')*PI/180,cx=f('c_rcx'),cy=f('c_rcy');
+    const dx=x-cx,dy=y-cy;
+    s('r_rot',`X' = ${(cx+dx*Math.cos(a)-dy*Math.sin(a)).toFixed(4)}\nY' = ${(cy+dx*Math.sin(a)+dy*Math.cos(a)).toFixed(4)}`);
+  }catch(e){}
+}
+function calc2pt(){
+  try{
+    const x1=f('c_x1'),y1=f('c_y1'),x2=f('c_x2'),y2=f('c_y2');
+    const d=Math.sqrt((x2-x1)**2+(y2-y1)**2),a=Math.atan2(y2-y1,x2-x1)*180/PI;
+    s('r_2pt',`Khoảng cách: ${d.toFixed(4)} mm\nGóc: ${a.toFixed(4)}°\nTrung điểm: (${((x1+x2)/2).toFixed(4)}, ${((y1+y2)/2).toFixed(4)})`);
+  }catch(e){}
+}
+function calcCircle(){
+  try{
+    const x1=f('c_p1x'),y1=f('c_p1y'),x2=f('c_p2x'),y2=f('c_p2y'),x3=f('c_p3x'),y3=f('c_p3y');
+    const A=x1*(y2-y3)-y1*(x2-x3)+x2*y3-x3*y2;
+    if(Math.abs(A)<1e-10){s('r_circle','⚠️ 3 điểm thẳng hàng');return;}
+    const B=(x1**2+y1**2)*(y3-y2)+(x2**2+y2**2)*(y1-y3)+(x3**2+y3**2)*(y2-y1);
+    const C=(x1**2+y1**2)*(x2-x3)+(x2**2+y2**2)*(x3-x1)+(x3**2+y3**2)*(x1-x2);
+    const cx=-B/(2*A),cy=-C/(2*A),r=Math.sqrt((x1-cx)**2+(y1-cy)**2);
+    s('r_circle',`Tâm: (${cx.toFixed(4)}, ${cy.toFixed(4)})\nR = ${r.toFixed(4)} mm   D = ${(2*r).toFixed(4)} mm`);
+  }catch(e){}
+}
+function p2xy(){try{const r=f('c_pr'),t=f('c_pt')*PI/180;s('r_p2xy',`X = ${(r*Math.cos(t)).toFixed(4)}\nY = ${(r*Math.sin(t)).toFixed(4)}`);}catch(e){}}
+function xy2p(){try{const x=f('c_pxx'),y=f('c_pyy');s('r_xy2p',`R = ${Math.sqrt(x**2+y**2).toFixed(4)}\nθ = ${(Math.atan2(y,x)*180/PI).toFixed(4)}°`);}catch(e){}}
+
+// ── TAB 2: THREAD ────────────────────────────────────────────────────────
+const METRIC={M2:[2,.4],M2_5:[2.5,.45],M3:[3,.5],M4:[4,.7],M5:[5,.8],M6:[6,1],M8:[8,1.25],
+  M10:[10,1.5],M12:[12,1.75],M14:[14,2],M16:[16,2],M18:[18,2.5],M20:[20,2.5],M22:[22,2.5],
+  M24:[24,3],M27:[27,3],M30:[30,3.5],M33:[33,3.5],M36:[36,4],M42:[42,4.5],M48:[48,5],M52:[52,5],M56:[56,5.5]};
+function lookupThread(){
+  const k=document.getElementById('t_sel').value.replace('.','_');
+  const d=METRIC[k];
+  if(!d)return;
+  const[D,P]=d,d2=D-.6495*P,d1=D-1.2269*P;
+  s('r_tlu',`D ngoài: ${D}mm   Bước P: ${P}mm\nd2: ${d2.toFixed(3)}mm   d1: ${d1.toFixed(3)}mm\nMũi khoan (75%): ⌀${(D-P).toFixed(1)}mm`);
+}
+function calcCustomThread(){
+  try{const D=f('t_td'),P=f('t_tp');
+    s('r_ct',`d2: ${(D-.6495*P).toFixed(4)}mm\nd1: ${(D-1.2269*P).toFixed(4)}mm\nSâu ren: ${(.6495*P).toFixed(4)}mm\nMũi khoan (75%): ⌀${(D-P).toFixed(2)}mm`);
+  }catch(e){}
+}
+function calcDrill(){
+  try{const D=f('t_dd'),P=f('t_dp'),k=[.75,.65,.85][document.getElementById('t_eng').selectedIndex],dr=D-k*P;
+    s('r_dr',`Đường kính mũi khoan: ${dr.toFixed(3)}mm\n→ Chọn tiêu chuẩn: ⌀${(Math.round(dr*20)/20).toFixed(2)}mm`);
+  }catch(e){}
+}
+function genGcode(){
+  try{const D=f('t_gd'),P=f('t_gp'),Z=parseFloat(document.getElementById('t_gz').value)||0,S=f('t_gs'),F=(P*S).toFixed(1);
+    const osp=document.getElementById('t_ctrl').selectedIndex===1;
+    document.getElementById('r_gc').value=osp
+      ?`' TAPPING M${D}×${P} — OSP\nS${S} M29\nG84 Z${Z.toFixed(3)} R5. F${F}\nG80`
+      :`(TAPPING M${D}×${P} — FANUC)\nS${S} M29\nG98 G84 Z${Z.toFixed(3)} R5. F${F}\nG80`;
+  }catch(e){}
+}
+
+// ── TAB 3: GEOMETRY ──────────────────────────────────────────────────────
+function calcTrig(){try{const a=f('g_a'),r=a*PI/180;s('r_trig',`sin(${a}°) = ${Math.sin(r).toFixed(6)}\ncos(${a}°) = ${Math.cos(r).toFixed(6)}\ntan(${a}°) = ${Math.tan(r).toFixed(6)}`);}catch(e){}}
+function calcPoly(){
+  try{const n=parseInt(document.getElementById('g_pn').value)||6,R=f('g_pr');
+    const ri=R*Math.cos(PI/n),side=2*R*Math.sin(PI/n);
+    s('r_poly',`Cạnh = ${side.toFixed(4)}mm\nBán kính trong r = ${ri.toFixed(4)}mm\nGóc trong = ${((n-2)*180/n).toFixed(4)}°\nDiện tích = ${(0.5*n*side*ri).toFixed(2)}mm²\nBước góc = ${(360/n).toFixed(4)}°`);
+  }catch(e){}
+}
+function dms2dec(){
+  try{const d=f('g_dd'),m=f('g_dm'),sc=f('g_ds');s('r_dms',`${(d+m/60+sc/3600).toFixed(6)}°`);}catch(e){}
+}
+function dec2dms(){
+  try{const dec=Math.abs(f('g_din')),d=Math.floor(dec),m=Math.floor((dec-d)*60),sc=((dec-d)*60-m)*60;
+    s('r_dms',`${d}°  ${m}'  ${sc.toFixed(3)}"`);}catch(e){}
+}
+function calcAreas(){
+  try{
+    const D=f('g_cd'),W=f('g_rw'),H=f('g_rh'),b=f('g_tb'),h=f('g_th');
+    s('r_area',`⬤ D${D}: ${(PI*(D/2)**2).toFixed(2)}mm²  周${(PI*D).toFixed(2)}mm\n▭ ${W}×${H}: ${(W*H).toFixed(2)}mm²  周${(2*(W+H)).toFixed(2)}mm\n▲ ${b}×${h}: ${(0.5*b*h).toFixed(2)}mm²`);
+  }catch(e){}
+}
+
+// ── TAB 4: UNITS ─────────────────────────────────────────────────────────
+function u_len(d){try{if(d==='mm')sv('u_in',(f('u_mm')/25.4).toFixed(6));else sv('u_mm',(f('u_in')*25.4).toFixed(6));}catch(e){}}
+function u_spd(){try{const v=f('u_vm');sv('u_vs',(v/60).toFixed(4));sv('u_vf',(v*3.28084).toFixed(2));}catch(e){}}
+function u_pres(){try{const v=f('u_mpa');sv('u_kgc',(v*10.197).toFixed(4));sv('u_psi',(v*145.038).toFixed(4));}catch(e){}}
+function u_torq(){try{const v=f('u_nm');sv('u_kgcm',(v*10.197).toFixed(4));sv('u_lbft',(v*0.73756).toFixed(4));}catch(e){}}
+function u_temp(d){try{if(d==='c')sv('u_df',(f('u_dc')*9/5+32).toFixed(2));else sv('u_dc',((f('u_df')-32)*5/9).toFixed(2));}catch(e){}}
+function u_feed(d){try{if(d==='r')sv('u_fmm',(f('u_fr')*f('u_frpm')).toFixed(2));else sv('u_fr',(f('u_fmm')/f('u_frpm')).toFixed(4));}catch(e){}}
+
+// ── TAB 5: MATERIAL ──────────────────────────────────────────────────────
+function calcBlock(){
+  try{const rho=parseFloat(document.getElementById('m_mat1').value),L=f('m_bl'),W=f('m_bw'),H=f('m_bh');
+    const v=L*W*H/1000,m=v*rho/1000;s('r_bl',`Thể tích: ${v.toFixed(2)}cm³\nKhối lượng: ${(m*1000).toFixed(1)}g  (${m.toFixed(3)}kg)`);}catch(e){}
+}
+function calcCyl(){
+  try{const rho=parseFloat(document.getElementById('m_mat2').value),D=f('m_cd'),L=f('m_cl');
+    const v=PI*(D/2)**2*L/1000,m=v*rho/1000;s('r_cy',`Thể tích: ${v.toFixed(2)}cm³\nKhối lượng: ${(m*1000).toFixed(1)}g  (${m.toFixed(3)}kg)`);}catch(e){}
+}
+function calcTube(){
+  try{const rho=parseFloat(document.getElementById('m_mat3').value),Do=f('m_to'),Di=f('m_ti'),L=f('m_tl');
+    const v=PI*((Do/2)**2-(Di/2)**2)*L/1000,m=v*rho/1000;s('r_tu',`Thể tích: ${v.toFixed(2)}cm³\nKhối lượng: ${(m*1000).toFixed(1)}g  (${m.toFixed(3)}kg)`);}catch(e){}
+}
+
+// ── GỐC XOAY MATH ────────────────────────────────────────────────────────
+function rotB(X,Y,Z,Xc,Yc,Zc,deg){
+  const t=deg*PI/180,c=Math.cos(t),s=Math.sin(t),dx=X-Xc,dz=Z-Zc;
+  return[Xc+dx*c-dz*s,Y,Zc+dx*s+dz*c];
+}
+function rotA(X,Y,Z,Xc,Yc,Zc,deg){
+  const t=deg*PI/180,c=Math.cos(t),s=Math.sin(t),dy=Y-Yc,dz=Z-Zc;
+  return[X,Yc+dy*c-dz*s,Zc+dy*s+dz*c];
+}
+function rotC(X,Y,Z,Xc,Yc,Zc,deg){
+  const t=deg*PI/180,c=Math.cos(t),s=Math.sin(t),dx=X-Xc,dy=Y-Yc;
+  return[Xc+dx*c-dy*s,Yc+dx*s+dy*c,Z];
+}
+function doRot(ax,X,Y,Z,Xc,Yc,Zc,deg){
+  return ax===0?rotB(X,Y,Z,Xc,Yc,Zc,deg):ax===1?rotA(X,Y,Z,Xc,Yc,Zc,deg):rotC(X,Y,Z,Xc,Yc,Zc,deg);
+}
+
+// Tab 6 Sub 1
+function calcNewWCS(){
+  try{
+    const ax=document.getElementById('gx_axis1').selectedIndex;
+    const theta=f('gx_theta1');
+    const Xc=f('gx_xc1'),Yc=f('gx_yc1'),Zc=f('gx_zc1');
+    const X0=f('gx_x0'),Y0=f('gx_y0'),Z0=f('gx_z0');
+    const[Xn,Yn,Zn]=doRot(ax,X0,Y0,Z0,Xc,Yc,Zc,theta);
+    s('r_gx1',`✅ G54 mới sau xoay:\n   X = ${Xn.toFixed(4)}   Y = ${Yn.toFixed(4)}   Z = ${Zn.toFixed(4)}\n\nLượng thay đổi:\n   ΔX = ${(Xn-X0).toFixed(4)}   ΔY = ${(Yn-Y0).toFixed(4)}   ΔZ = ${(Zn-Z0).toFixed(4)}`);
+  }catch(e){s('r_gx1','⚠️ Lỗi: '+e);}
+}
+
+// Tab 6 Sub 2
+let lastCenter=null;
+function calcRotCenter(){
+  try{
+    const ax=document.getElementById('gx_axis2').selectedIndex;
+    const t1=f('gx_t1'),t2=f('gx_t2'),dtheta=t2-t1;
+    const X1=f('gx_x1'),Y1=f('gx_y1'),Z1=f('gx_z1');
+    const X2=f('gx_x2'),Y2=f('gx_y2'),Z2=f('gx_z2');
+    const dt=dtheta*PI/180,A=1-Math.cos(dt),B=Math.sin(dt),det=A*A+B*B;
+    if(Math.abs(det)<1e-10){s('r_gx2','⚠️ Hai góc bằng nhau!');return;}
+    let Xc,Yc,Zc;
+    if(ax===0){// B: rotate in XZ
+      const c1=X2-X1*Math.cos(dt)+Z1*Math.sin(dt),c2=Z2-X1*Math.sin(dt)-Z1*Math.cos(dt);
+      Xc=(A*c1-B*c2)/det;Zc=(B*c1+A*c2)/det;Yc=(Y1+Y2)/2;
+    }else if(ax===1){// A: rotate in YZ
+      const c1=Y2-Y1*Math.cos(dt)+Z1*Math.sin(dt),c2=Z2-Y1*Math.sin(dt)-Z1*Math.cos(dt);
+      Yc=(A*c1-B*c2)/det;Zc=(B*c1+A*c2)/det;Xc=(X1+X2)/2;
+    }else{// C: rotate in XY
+      const c1=X2-X1*Math.cos(dt)+Y1*Math.sin(dt),c2=Y2-X1*Math.sin(dt)-Y1*Math.cos(dt);
+      Xc=(A*c1-B*c2)/det;Yc=(B*c1+A*c2)/det;Zc=(Z1+Z2)/2;
+    }
+    // Verify
+    const[Xv,Yv,Zv]=doRot(ax,X1,Y1,Z1,Xc,Yc,Zc,dtheta);
+    const err=ax===0?Math.sqrt((Xv-X2)**2+(Zv-Z2)**2):ax===1?Math.sqrt((Yv-Y2)**2+(Zv-Z2)**2):Math.sqrt((Xv-X2)**2+(Yv-Y2)**2);
+    lastCenter={Xc,Yc,Zc,ax};
+    s('r_gx2',`✅ Tâm xoay tìm được:\n   Xc = ${Xc.toFixed(4)}   Yc = ${Yc.toFixed(4)}   Zc = ${Zc.toFixed(4)}\n\nSai số kiểm tra: ${err.toFixed(5)} mm ${err<0.01?'✅ OK':'⚠️ Kiểm tra lại!'}`);
+  }catch(e){s('r_gx2','⚠️ Lỗi: '+e);}
+}
+function sendToTab1(){
+  if(!lastCenter){alert('Hãy tính tâm xoay trước!');return;}
+  sv('gx_xc1',lastCenter.Xc.toFixed(4));sv('gx_yc1',lastCenter.Yc.toFixed(4));sv('gx_zc1',lastCenter.Zc.toFixed(4));
+  showSub(0);
+}
+
+// Tab 6 Sub 3
+function calc3plus2(){
+  try{
+    const ax=document.getElementById('gx_axis3').selectedIndex;
+    const Xc=f('gx_xc3'),Yc=f('gx_yc3'),Zc=f('gx_zc3');
+    const X0=f('gx_x03'),Y0=f('gx_y03'),Z0=f('gx_z03');
+    const angles=document.getElementById('gx_angles').value.split(',').map(a=>parseFloat(a.trim())).filter(a=>!isNaN(a));
+    let lines=[`${'Mặt'.padEnd(6)} ${'Góc'.padStart(10)} ${'G54-X'.padStart(13)} ${'G54-Y'.padStart(13)} ${'G54-Z'.padStart(13)}`,'─'.repeat(60)];
+    angles.forEach((th,i)=>{
+      const[Xn,Yn,Zn]=doRot(ax,X0,Y0,Z0,Xc,Yc,Zc,th);
+      lines.push(`  Mặt ${i+1}   ${th.toFixed(1).padStart(8)}°   ${Xn.toFixed(4).padStart(12)}   ${Yn.toFixed(4).padStart(12)}   ${Zn.toFixed(4).padStart(12)}`);
+    });
+    document.getElementById('r_gx3').value=lines.join('\n');
+  }catch(e){document.getElementById('r_gx3').value='⚠️ Lỗi: '+e;}
+}
+
+// Tab 6 Sub 4
+function calcWCS32(){
+  try{
+    const ax=document.getElementById('gx_axis4').selectedIndex;
+    const theta=f('gx_theta4');
+    const Xc=f('gx_xc4'),Yc=f('gx_yc4'),Zc=f('gx_zc4');
+    const Xp=f('gx_xp'),Yp=f('gx_yp'),Zp=f('gx_zp');
+    const Xl=f('gx_xl'),Yl=f('gx_yl'),Zl=f('gx_zl');
+    const[Xrl,Yrl,Zrl]=doRot(ax,Xl,Yl,Zl,0,0,0,theta);
+    s('r_gx4',`✅ G54 cần đặt:\n   X = ${(Xp-Xrl).toFixed(4)}   Y = ${(Yp-Yrl).toFixed(4)}   Z = ${(Zp-Zrl).toFixed(4)}`);
+  }catch(e){s('r_gx4','⚠️ Lỗi: '+e);}
+}
+
+// ── PROFILES (LocalStorage) ───────────────────────────────────────────────
+function getProfiles(){try{return JSON.parse(localStorage.getItem('kayscnc_profiles')||'[]');}catch{return[];}}
+function setProfiles(p){localStorage.setItem('kayscnc_profiles',JSON.stringify(p));}
+
+function refreshProfileTable(){
+  const profiles=getProfiles();
+  const tbody=document.getElementById('profileTable');
+  const noMsg=document.getElementById('noProfiles');
+  while(tbody.rows.length>1)tbody.deleteRow(1);
+  noMsg.style.display=profiles.length?'none':'block';
+  profiles.forEach((p,i)=>{
+    const tr=tbody.insertRow();tr.dataset.idx=i;tr.style.cursor='pointer';
+    tr.onclick=()=>{document.querySelectorAll('.profile-table tr').forEach(r=>r.style.background='');tr.style.background=getComputedStyle(document.documentElement).getPropertyValue('--accent')+'33';};
+    [i+1,p.name||'',p.axis||'',Number(p.Xc).toFixed(4),Number(p.Yc).toFixed(4),Number(p.Zc).toFixed(4),p.date||''].forEach(v=>{
+      const td=tr.insertCell();td.textContent=v;
+    });
+  });
+}
+
+function saveProfile(){
+  if(!lastCenter){alert('Hãy tính tâm xoay trước!');return;}
+  const name=prompt('Tên hồ sơ / プロファイル名:');
+  if(!name||!name.trim())return;
+  const profiles=getProfiles();
+  profiles.push({name:name.trim(),Xc:lastCenter.Xc,Yc:lastCenter.Yc,Zc:lastCenter.Zc,axis:['B','A','C'][lastCenter.ax]||'B',date:new Date().toLocaleString()});
+  setProfiles(profiles);refreshProfileTable();
+  alert('✅ Đã lưu hồ sơ: '+name.trim());
+}
+
+function getSelectedProfileIdx(){
+  const row=document.querySelector('.profile-table tr[data-idx][style*="background"]');
+  return row?parseInt(row.dataset.idx):-1;
+}
+function loadProfile(target){
+  const idx=getSelectedProfileIdx();
+  if(idx<0){alert('Chọn một hồ sơ trước!');return;}
+  const p=getProfiles()[idx];
+  if(!p)return;
+  const[xa,ya,za,xb,yb,zb]={
+    0:['gx_xc1','gx_yc1','gx_zc1','gx_xc1','gx_yc1','gx_zc1'],
+    3:['gx_xc3','gx_yc3','gx_zc3','gx_xc3','gx_yc3','gx_zc3'],
+    4:['gx_xc4','gx_yc4','gx_zc4','gx_xc4','gx_yc4','gx_zc4'],
+  }[target]||['gx_xc1','gx_yc1','gx_zc1'];
+  sv(xa,p.Xc.toFixed(4));sv(ya,p.Yc.toFixed(4));sv(za,p.Zc.toFixed(4));
+  if(target!==5)showSub(target);
+}
+function loadProfileToTab1(){loadProfile(0);}
+function loadProfileToTab3(){loadProfile(3);}
+function loadProfileToTab4(){loadProfile(4);}
+function loadProfileToTab1FromTable(){loadProfile(0);}
+
+function deleteProfile(){
+  const idx=getSelectedProfileIdx();if(idx<0){alert('Chọn hồ sơ trước!');return;}
+  const profiles=getProfiles();
+  if(!confirm(`Xóa hồ sơ "${profiles[idx].name}"?`))return;
+  profiles.splice(idx,1);setProfiles(profiles);refreshProfileTable();
+}
+function exportProfiles(){
+  const data=JSON.stringify(getProfiles(),null,2);
+  const a=document.createElement('a');a.href='data:application/json,'+encodeURIComponent(data);
+  a.download='kayscnc_profiles.json';a.click();
+}
+function importProfiles(){document.getElementById('importFile').click();}
+function importFromFile(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{try{const data=JSON.parse(e.target.result);const p=getProfiles();p.push(...data);setProfiles(p);refreshProfileTable();alert(`✅ Đã nhập ${data.length} hồ sơ`);}catch{alert('❌ File không hợp lệ');}};
+  reader.readAsText(file);input.value='';
+}
+
+function copyText(id){
+  const el=document.getElementById(id);
+  const text=el.value||el.textContent;
+  navigator.clipboard.writeText(text).then(()=>alert('✅ Đã sao chép!')).catch(()=>{el.select&&el.select();document.execCommand('copy');});
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+lookupThread();
+refreshProfileTable();
+calcRPM();calcVc();calcFeed();
+</script>
+</body>
+</html>
